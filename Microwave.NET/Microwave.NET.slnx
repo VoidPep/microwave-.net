@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="../Microwave.NET.API/Microwave.NET.API.csproj" />
+  <Project Path="../Microwave.NET.DataStructures/Microwave.NET.DataStructures.csproj" />
+  <Project Path="../Microwave.NET.Services/Microwave.NET.Services.csproj" />
+  <Project Path="../Microwave.NET.Test/Microwave.NET.Test.csproj" />
+  <Project Path="Microwave.NET.csproj" />
+</Solution>
