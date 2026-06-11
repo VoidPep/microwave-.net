@@ -4,12 +4,7 @@ namespace Microwave.NET.Services.Implementations;
 
 public class MicrowaveService : IMicrowaveService
 {
-    public void SetPower(int powerLevel)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SetTimerInSeconds(int timer)
+    public void Start(CancellationTokenSource cts)
     {
         throw new NotImplementedException();
     }

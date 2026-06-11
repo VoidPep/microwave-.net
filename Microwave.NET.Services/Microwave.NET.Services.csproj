@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Microwave.NET.DataStructures\Microwave.NET.DataStructures.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,21 +1,62 @@
-﻿using Microwave.NET.Services.Interfaces;
-using System.Collections.Concurrent;
+﻿using Microwave.NET.DataStructures.Constants;
+using Microwave.NET.Services.Interfaces;
 
 namespace Microwave.NET.Services.Implementations;
 
 public class MicrowaveManager : IMicrowaveManager
 {
-    private readonly ConcurrentDictionary<string, CancellationTokenSource> operations = new();
+    private readonly CancellationTokenSource Cts = new();
 
-    public void Start(string key, out CancellationTokenSource ct)
+    public int? TimerInSeconds { get; set; } = null;
+    public int? PowerLevel { get; set; } = null;
+    public bool IsRunning { get; set; }
+    public bool IsPaused { get; set; }
+
+    public void SetPower(int powerLevel = 10)
     {
-        ct = new CancellationTokenSource();
-        operations.TryAdd(key, ct);
+        if (IsRunning) return;
+
+        PowerLevel = powerLevel;
     }
 
-    public void Stop(string key)
+    public void SetTimerInSeconds(int timer)
     {
-        if (operations.TryGetValue(key, out var cts))
-            cts.Cancel();
+        if (IsRunning) return;
+
+        TimerInSeconds = timer;
+    }
+
+    public void Start(out CancellationTokenSource ct)
+    {
+        ct = new CancellationTokenSource();
+
+        if (IsRunning)
+        {
+            TimerInSeconds += 30;
+            return;
+        }
+
+        if (TimerInSeconds == null || PowerLevel == null)
+            QuickStart();
+
+        IsRunning = true;
+    }
+
+    private void QuickStart()
+    {
+        TimerInSeconds ??= GlobalConstants.QuickStartTimerDefault;
+        PowerLevel ??= GlobalConstants.QuickStartPowerDefault;
+    }
+
+    public void Stop()
+    {
+        Cts.Cancel();
+
+        IsRunning = false;
+    }
+
+    public void Pause()
+    {
+        IsPaused = false;
     }
 }

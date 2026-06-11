@@ -9,6 +9,8 @@ namespace Microwave.NET.Services.Interfaces;
 /// </summary>
 public interface IMicrowaveManager
 {
-    void Start(string key, out CancellationTokenSource ct);
-    void Stop(string key);
+    void Start(out CancellationTokenSource ct);
+    void Stop();
+    void SetTimerInSeconds(int timer);
+    void SetPower(int powerLevel = 10);
 }
