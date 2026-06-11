@@ -1,0 +1,6 @@
+@Microwave.NET.API_HostAddress = http://localhost:5050
+
+GET {{Microwave.NET.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
