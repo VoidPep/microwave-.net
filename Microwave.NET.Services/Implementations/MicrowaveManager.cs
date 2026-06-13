@@ -1,16 +1,20 @@
 ﻿using Microwave.NET.DataStructures.Constants;
 using Microwave.NET.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Microwave.NET.Services.Implementations;
 
-public class MicrowaveManager : IMicrowaveManager
+public class MicrowaveManager(IServiceProvider provider) : IMicrowaveManager
 {
-    private readonly CancellationTokenSource Cts = new();
+    public CancellationTokenSource Cts { get; set; } = new();
 
+    public int? AddToTimerValue { get; set; } = null;
     public int? TimerInSeconds { get; set; } = null;
     public int? PowerLevel { get; set; } = null;
     public bool IsRunning { get; set; }
     public bool IsPaused { get; set; }
+    public string Progress { get; set; } = "";
+    public int RemainingTime { get; set; }
 
     public void SetPower(int powerLevel = 10)
     {
@@ -26,13 +30,15 @@ public class MicrowaveManager : IMicrowaveManager
         TimerInSeconds = timer;
     }
 
-    public void Start(out CancellationTokenSource ct)
+    public void Start(out bool canStart)
     {
-        ct = new CancellationTokenSource();
+        Cts = new CancellationTokenSource();
+        canStart = true;
 
-        if (IsRunning)
+        if (IsRunning && !IsPaused)
         {
-            TimerInSeconds += 30;
+            AddToTimerValue += 30;
+            canStart = false;
             return;
         }
 
@@ -40,6 +46,7 @@ public class MicrowaveManager : IMicrowaveManager
             QuickStart();
 
         IsRunning = true;
+        IsPaused = false;
     }
 
     private void QuickStart()
@@ -52,11 +59,25 @@ public class MicrowaveManager : IMicrowaveManager
     {
         Cts.Cancel();
 
+        Reset();
+
         IsRunning = false;
+        IsPaused = false;
+    }
+
+    private void Reset()
+    {
+        IsPaused = false;
+        IsRunning = false;
+
+        RemainingTime = 0;
+        TimerInSeconds = 0;
     }
 
     public void Pause()
     {
-        IsPaused = false;
+        Cts.Cancel();
+
+        IsPaused = true;
     }
 }

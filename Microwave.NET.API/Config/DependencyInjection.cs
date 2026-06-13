@@ -10,6 +10,10 @@ public static class DependencyInjection
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
 
+        // Pensei em utilizar o signalR pois estou lidando com um singleton e uma aplicação web mais moderna, mas poderia ser feito com polling em um serviço de log
+        // Porém eu não quis fazer um serviço de log sequer um arquivo de log para não encher mais o projeto e desacoplar ao máximo
+        builder.Services.AddSignalR();
+
         InjectServices(builder);
     }
 

@@ -9,8 +9,19 @@ namespace Microwave.NET.Services.Interfaces;
 /// </summary>
 public interface IMicrowaveManager
 {
-    void Start(out CancellationTokenSource ct);
+    CancellationTokenSource Cts { get; set; }
+
+    int? AddToTimerValue { get; set; }
+    int? TimerInSeconds { get; set; }
+    int? PowerLevel { get; set; }
+    bool IsRunning { get; set; }
+    bool IsPaused { get; set; }
+    string Progress { get; set; }
+    int RemainingTime { get; set; }
+
     void Stop();
     void SetTimerInSeconds(int timer);
     void SetPower(int powerLevel = 10);
+    void Pause();
+    void Start(out bool canStart);
 }

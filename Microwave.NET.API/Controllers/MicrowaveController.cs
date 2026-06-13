@@ -13,7 +13,7 @@ public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveM
     public IActionResult SetTimer(int timeInSeconds)
     {
         if (timeInSeconds < GlobalConstants.MinTimerInSeconds || timeInSeconds > GlobalConstants.MaxTimerInSeconds)
-            return new JsonResult("Por favor informe um valor para o temporizador válido.");
+            return new JsonResult(new { Message = "Por favor informe um valor para o temporizador válido." });
 
         try
         {
@@ -24,27 +24,26 @@ public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveM
 
             throw;
         }
-
-        return new JsonResult("Timer Set.");
+        return new JsonResult(new { Message = "Temporizador alterado." });
     }
 
     [HttpPost, Route("set-power")]
     public IActionResult SetPower(int powerLevel = 10)
     {
         if (powerLevel < GlobalConstants.MinPowerLevel || powerLevel > GlobalConstants.MaxPowerLevel)
-            return new JsonResult("Por favor informe um valor para a potência válido.");
+            return new JsonResult(new { Message = "Por favor informe um valor para a potência válido." });
 
-        return new JsonResult("Power Set.");
+        return new JsonResult(new { Message = "Potência alterada." });
     }
 
     [HttpPost, Route("start")]
-    public IActionResult Start()
+    public async Task<IActionResult> StartAsync()
     {
-        manager.Start(out CancellationTokenSource cts);
+        manager.Start(out var canStart);
 
-        microwaveService.Start(cts);
+        if (canStart) await microwaveService.StartHeatingAsync();
 
-        return new JsonResult("Microwave started.");
+        return new JsonResult(new { Message = "Iniciado" });
     }
 
     [HttpPost, Route("cancel")]
@@ -52,6 +51,14 @@ public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveM
     {
         manager.Stop();
 
-        return new JsonResult("Microwave canceled.");
+        return new JsonResult(new { Message = "Cancelado" });
+    }
+
+    [HttpPost, Route("pause")]
+    public IActionResult Pause()
+    {
+        manager.Pause();
+
+        return new JsonResult(new { Message = "Pausado" });
     }
 }
