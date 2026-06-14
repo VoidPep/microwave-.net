@@ -4,8 +4,49 @@
     ViewData["Title"] = "Home page";
 }
 
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/9.0.6/signalr.min.js"></script>
+}
+
 <div class="text-center">
     <h1 class="display-4">Microwave .NET</h1>
 
-    
+    <div class="d-flex justify-content-around">
+        <div class="d-flex flex-column">
+            <div class="mb-3">
+                <label for="timerInput" class="form-label">Temporizador</label>
+                <input type="text" class="form-control" id="timerInput" placeholder="">
+            </div>
+            <div class="mb-3">
+                <label for="powerInput" class="form-label">Potência</label>
+                <input type="text" class="form-control" id="powerInput" placeholder="">
+            </div>
+
+            <div class="mb-3">
+                <button type="button" id="btnIniciar" class="btn btn-primary mb-3">Iniciar</button>
+            </div>
+
+            <div class="mb-3">
+                <button type="button" id="btnPausar" class="btn btn-primary mb-3">Pausar/Parar</button>
+            </div>
+        </div>
+        <div>
+            <div class="mb-3">
+                <span>Tempo restante</span>
+                <span id="timeRemaining"></span>
+            </div>
+            <div class="mb-3">
+                <span>Potência</span>
+                <span id="power"></span>
+            </div>
+        </div>
+    </div>
+    <div class="mb-3">
+        <span>Progresso:</span>
+        <span id="progress"></span>
+    </div>
+
+    <div class="mb-3">
+        <span id="isRunning"></span>
+    </div>
 </div>

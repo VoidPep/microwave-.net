@@ -5,19 +5,20 @@ using Microwave.NET.Services.Interfaces;
 
 namespace Microwave.NET.API.Controllers;
 
+[ApiController]
 [Route("api/microwave")]
 public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveManager manager) : ControllerBase
 {
 
     [HttpPost, Route("set-timer")]
-    public IActionResult SetTimer(int timeInSeconds)
+    public async Task<IActionResult> SetTimerAsync(int timeInSeconds)
     {
         if (timeInSeconds < GlobalConstants.MinTimerInSeconds || timeInSeconds > GlobalConstants.MaxTimerInSeconds)
             return new JsonResult(new { Message = "Por favor informe um valor para o temporizador válido." });
 
         try
         {
-            manager.SetTimerInSeconds(timeInSeconds);
+            await manager.SetTimerInSecondsAsync(timeInSeconds);
         }
         catch (Exception)
         {
@@ -28,18 +29,27 @@ public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveM
     }
 
     [HttpPost, Route("set-power")]
-    public IActionResult SetPower(int powerLevel = 10)
+    public async Task<IActionResult> SetPowerAsync(int powerLevel = 10)
     {
         if (powerLevel < GlobalConstants.MinPowerLevel || powerLevel > GlobalConstants.MaxPowerLevel)
             return new JsonResult(new { Message = "Por favor informe um valor para a potência válido." });
 
+        try
+        {
+            await manager.SetPowerAsync(powerLevel);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
         return new JsonResult(new { Message = "Potência alterada." });
-    }
+    } 
 
     [HttpPost, Route("start")]
     public async Task<IActionResult> StartAsync()
     {
-        manager.Start(out var canStart);
+        var canStart = await manager.StartAsync();
 
         if (canStart) await microwaveService.StartHeatingAsync();
 
@@ -47,18 +57,28 @@ public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveM
     }
 
     [HttpPost, Route("cancel")]
-    public IActionResult Cancel()
+    public async Task<IActionResult> CancelAsync()
     {
-        manager.Stop();
+        if (!manager.IsRunning)
+        {
+            manager.ResetSettings();
+            return new JsonResult(new { Message = "Timer e potência limpos." });
+        }
 
-        return new JsonResult(new { Message = "Cancelado" });
-    }
+        if (!manager.IsPaused && manager.IsRunning)
+        {
+            await manager.PauseAsync();
 
-    [HttpPost, Route("pause")]
-    public IActionResult Pause()
-    {
-        manager.Pause();
+            return new JsonResult(new { Message = "Pausado" });
+        }
 
-        return new JsonResult(new { Message = "Pausado" });
+        if (manager.IsPaused)
+        {
+            await manager.StopAsync();
+
+            return new JsonResult(new { Message = "Cancelado" });
+        }
+
+        return new JsonResult(new { Message = "" });
     }
 }

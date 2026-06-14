@@ -1,4 +1,4 @@
-﻿using Microwave.NET.Services.Implementations;
+﻿using Microwave.NET.Services.Implementations.Microwave;
 using Microwave.NET.Services.Interfaces;
 
 namespace Microwave.NET.API.Config;
@@ -7,7 +7,7 @@ public static class DependencyInjection
 {
     public static void InjectAll(WebApplicationBuilder builder)
     {
-        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddOpenApi();
 
         // Pensei em utilizar o signalR pois estou lidando com um singleton e uma aplicação web mais moderna, mas poderia ser feito com polling em um serviço de log
@@ -15,6 +15,16 @@ public static class DependencyInjection
         builder.Services.AddSignalR();
 
         InjectServices(builder);
+
+        builder.Services.AddControllers();
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+                policy.SetIsOriginAllowed(_ => true)
+                      .AllowAnyHeader()
+                      .AllowAnyMethod()
+                      .AllowCredentials());
+        });
     }
 
     /// <summary>

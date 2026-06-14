@@ -1,5 +1,6 @@
 using Microwave.NET.API.Config;
 using Microwave.NET.DataStructures.SignalR;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,17 +12,22 @@ DependencyInjection.InjectAll(builder);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+else
+{
+    app.UseHttpsRedirection();
+}
 
-app.MapHub<MicrowaveHub>("/microwaveHub");
+app.UseCors();
 
-app.UseHttpsRedirection();
+app.MapScalarApiReference();
 
 app.UseAuthorization();
+
+app.MapHub<MicrowaveHub>("/microwaveHub");
 
 app.MapControllers();
 

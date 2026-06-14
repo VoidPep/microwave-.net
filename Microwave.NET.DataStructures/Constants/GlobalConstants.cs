@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microwave.NET.DataStructures.Constants;
+﻿namespace Microwave.NET.DataStructures.Constants;
 
 public static class GlobalConstants
 {

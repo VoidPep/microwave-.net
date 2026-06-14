@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microwave.NET.Services.Implementations.PresetsPrograms;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,17 +12,19 @@ public interface IMicrowaveManager
 {
     CancellationTokenSource Cts { get; set; }
 
-    int? AddToTimerValue { get; set; }
     int? TimerInSeconds { get; set; }
     int? PowerLevel { get; set; }
     bool IsRunning { get; set; }
     bool IsPaused { get; set; }
     string Progress { get; set; }
     int RemainingTime { get; set; }
+    char? Character { get; set; }
 
-    void Stop();
-    void SetTimerInSeconds(int timer);
-    void SetPower(int powerLevel = 10);
-    void Pause();
-    void Start(out bool canStart);
+    void ResetSettings();
+    Task SetPowerAsync(int powerLevel = 10);
+    Task SetTimerInSecondsAsync(int timer);
+    Task<bool> StartAsync();
+    Task StopAsync();
+    Task PauseAsync();
+    void SetPreset(EnumAlimentos opcao);
 }
