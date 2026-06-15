@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Microwave.NET.DataStructures\Microwave.NET.DataStructures.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Implementations\PresetsPrograms\Presets\" />
-  </ItemGroup>
-
 </Project>

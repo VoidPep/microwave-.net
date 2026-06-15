@@ -2,10 +2,10 @@
 
 public abstract class BasePresetedProgram
 {
-    public string Nome { get; set; }
-    public string Instrucoes { get; set; }
-    public int Tempo { get; set; }
-    public int Potencia { get; set; }
-    public EnumAlimentos Alimento { get; set; }
+    public abstract string Nome { get; }
+    public abstract string Instrucoes { get; }
+    public abstract int Tempo { get; }
+    public abstract int Potencia { get; }
+    public abstract EnumAlimentos Alimento { get; }
 
 }

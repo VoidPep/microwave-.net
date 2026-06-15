@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Microwave.NET.Services.Implementations.Microwave;
 
-public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext) : IMicrowaveManager
+public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext, IEnumerable<IPresetProgram> presetPrograms) : IMicrowaveManager
 {
     public CancellationTokenSource Cts { get; set; } = new();
 
@@ -94,8 +94,6 @@ public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext) : IMicrowave
 
     public async Task PauseAsync()
     {
-        Cts.Cancel();
-
         IsPaused = true;
 
         await UpdateHubAsync();
@@ -103,28 +101,9 @@ public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext) : IMicrowave
 
     public void SetPreset(EnumAlimentos opcao)
     {
-        // Entendo que reflection nesse caso pode ser que seja mais pesado em relação a perfomance e mais custoso, porém é mais escalável pensando em múltiplos outros novos presets
-        Type typeBasePreset = typeof(BasePresetedProgram);
+        var preset = presetPrograms.FirstOrDefault(q => q.Alimento == opcao);
 
-        var preset = Assembly.GetExecutingAssembly()
-            .GetTypes()
-            .Where(q => q.IsClass && !q.IsAbstract && q.IsSubclassOf(typeBasePreset))
-            .ToList()
-            .FirstOrDefault(q =>
-            {
-                var prop = q.GetProperty("Alimento");
-                if (prop == null) return false;
-
-                var instanciaTemporaria = Activator.CreateInstance(q);
-                var valorAlimento = prop.GetValue(instanciaTemporaria);
-
-                return valorAlimento != null && valorAlimento.Equals(opcao);
-            });
-
-
-
-        var presetFinal = (BasePresetedProgram)Activator.CreateInstance(preset);
-
+        
     }
 
     private async Task UpdateHubAsync()

@@ -2,11 +2,9 @@
 
 public enum EnumAlimentos
 {
-    PIPOCA = 0,
-    CARNE_EM_PEDACO = 1,
+    PIPOCA = 1,
     LEITE = 2,
     CARNE_BOI = 3,
     FRANGO = 4,
-    FEIJAO = 5,
-
+    FEIJAO = 5
 }

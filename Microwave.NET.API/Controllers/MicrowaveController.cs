@@ -49,6 +49,12 @@ public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveM
     [HttpPost, Route("start")]
     public async Task<IActionResult> StartAsync()
     {
+        if(manager.IsPaused)
+        {
+            manager.IsPaused = false;
+            return new JsonResult(new { Message = "Retornado" });
+        }
+
         var canStart = await manager.StartAsync();
 
         if (canStart) await microwaveService.StartHeatingAsync();

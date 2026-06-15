@@ -1,4 +1,5 @@
 ﻿using Microwave.NET.Services.Implementations.Microwave;
+using Microwave.NET.Services.Implementations.PresetsPrograms.Presets;
 using Microwave.NET.Services.Interfaces;
 
 namespace Microwave.NET.API.Config;
@@ -15,6 +16,7 @@ public static class DependencyInjection
         builder.Services.AddSignalR();
 
         InjectServices(builder);
+        InjectPresetPrograms(builder);
 
         builder.Services.AddControllers();
         builder.Services.AddCors(options =>
@@ -25,6 +27,15 @@ public static class DependencyInjection
                       .AllowAnyMethod()
                       .AllowCredentials());
         });
+    }
+
+    private static void InjectPresetPrograms(WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IPresetProgram, PresetCarneBovina>();
+        builder.Services.AddScoped<IPresetProgram, PresetFeijao>();
+        builder.Services.AddScoped<IPresetProgram, PresetFrango>();
+        builder.Services.AddScoped<IPresetProgram, PresetLeite>();
+        builder.Services.AddScoped<IPresetProgram, PresetPipoca>();
     }
 
     /// <summary>

@@ -11,12 +11,19 @@ public class MicrowaveService(IMicrowaveManager manager, IHubContext<MicrowaveHu
     public async Task StartHeatingAsync()
     {
         manager.Progress = "";
+        bool flowControl = true;
 
         while (manager.RemainingTime < manager.TimerInSeconds)
         {
             try
             {
-                bool flowControl = await ExecuteHeatingAsync();
+                if (manager.IsPaused)
+                {
+                    await Task.Delay(500);
+                    continue;
+                }
+
+                flowControl = await ExecuteHeatingAsync();
                 if (!flowControl)
                     break;
 
@@ -24,27 +31,38 @@ public class MicrowaveService(IMicrowaveManager manager, IHubContext<MicrowaveHu
             }
             catch (TaskCanceledException)
             {
-                //
+                await SetProgressAsync(" Aquecimento cancelado.");
+                await manager.StopAsync();
+                return;
             }
         }
 
-        await SetProgressAsync("\nAquecimento concluído.");
+        var status = flowControl ? "concluído" : "cancelado";
+        await SetProgressAsync($" Aquecimento {status}.");
         await manager.StopAsync();
     }
 
     private async Task<bool> ExecuteHeatingAsync()
     {
-        var cts = manager.Cts;
+        try
+        {
 
-        if (cts.Token.IsCancellationRequested)
-            return false;
+            var cts = manager.Cts;
 
-        await SetProgressAsync(string.Concat(Enumerable.Repeat(manager.Character ?? '.', manager.PowerLevel ?? GlobalConstants.QuickStartPowerDefault)));
-        await SetProgressAsync(" ");
+            if (cts.Token.IsCancellationRequested)
+                return false;
 
-        await Task.Delay(1000, cts.Token);
+            await SetProgressAsync(string.Concat(Enumerable.Repeat(manager.Character ?? '.', manager.PowerLevel ?? GlobalConstants.QuickStartPowerDefault)));
+            await SetProgressAsync(" ");
 
-        return true;
+            await Task.Delay(1000, cts.Token);
+
+            return true;
+        }
+        catch (TaskCanceledException)
+        {
+            throw;
+        }
     }
 
     private async Task SetProgressAsync(string progress)
