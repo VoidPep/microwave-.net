@@ -6,11 +6,11 @@ async function iniciar() {
     if (presetId) {
         const selectedPreset = allPresets.find(p => p.id == presetId);
         if (selectedPreset) {
-            await $.post(`${API_URL}/api/microwave/set-preset?nomePrograma=${encodeURIComponent(selectedPreset.nome)}`);
+            await post(`set-preset?nomePrograma=${encodeURIComponent(selectedPreset.nome)}`);
         }
     } else {
-        if (timer) await $.post(`${API_URL}/api/microwave/set-timer?timeInSeconds=${timer}`);
-        if (power) await $.post(`${API_URL}/api/microwave/set-power?powerLevel=${power}`);
+        if (timer) await post(`set-timer?timeInSeconds=${timer}`);
+        if (power) await post(`set-power?powerLevel=${power}`);
     }
 
     await post("start");

@@ -23,7 +23,6 @@ function formatTimeDisplay(seconds) {
 }
 
 connection.on("PropertyChanged", (state) => {
-    console.log(state.totalTime)
     $("#time").text(formatTimeDisplay(state.totalTime));
     $("#timeRemaining").text(formatTimeDisplay(state.remainingTime));
     $("#power").text(state.powerLevel ?? "--");

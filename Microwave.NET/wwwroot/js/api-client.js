@@ -70,5 +70,5 @@ async function getRequest(endpoint) {
         headers: authHeaders()
     });
     const result = await response.json();
-    return JSON.parse(result.data) ?? result;
+    return result;
 }
