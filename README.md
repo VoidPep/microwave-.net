@@ -6,11 +6,11 @@ Simulação de um microondas via web, construída em .NET 10 com arquitetura sep
 
 ## Estrutura de Projetos
 
-`Microwave.NET` -> Frontend — Razor Pages + JavaScript
-`Microwave.NET.API` -> Backend — Controllers REST + configuração de serviços |
-`Microwave.NET.Services` -> Lógica de negócio — Manager, Service, Presets |
-`Microwave.NET.DataStructures` -> DTOs, constantes, enums e definição do Hub SignalR |
-`Microwave.NET.Test` -> Testes unitários com xUnit e Moq |
+- `Microwave.NET` -> Frontend — Razor Pages + JavaScript
+- `Microwave.NET.API` -> Backend — Controllers REST + configuração de serviços |
+- `Microwave.NET.Services` -> Lógica de negócio — Manager, Service, Presets |
+- `Microwave.NET.DataStructures` -> DTOs, constantes, enums e definição do Hub SignalR |
+- `Microwave.NET.Test` -> Testes unitários com xUnit e Moq |
 
 Separei tudo com um formato de Layered Architecture (Arquitetura em camadas).
 
