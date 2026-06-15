@@ -7,5 +7,6 @@ public abstract class BasePresetedProgram
     public abstract int Tempo { get; }
     public abstract int Potencia { get; }
     public abstract EnumAlimentos Alimento { get; }
+    public abstract char Caractere { get; }
 
 }

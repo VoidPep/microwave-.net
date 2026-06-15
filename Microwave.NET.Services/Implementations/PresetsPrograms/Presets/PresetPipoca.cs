@@ -10,4 +10,5 @@ public class PresetPipoca : BasePresetedProgram, IPresetProgram
     public override int Tempo { get => 180; }
     public override int Potencia { get => 7; }
     public override EnumAlimentos Alimento { get => EnumAlimentos.PIPOCA; }
+    public override char Caractere { get => '*'; }
 }

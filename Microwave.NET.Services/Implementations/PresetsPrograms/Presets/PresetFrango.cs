@@ -10,4 +10,5 @@ public class PresetFrango: BasePresetedProgram, IPresetProgram
     public override int Tempo { get => 840; }
     public override int Potencia { get => 4; }
     public override EnumAlimentos Alimento { get => EnumAlimentos.FRANGO; }
+    public override char Caractere { get => '@'; }
 }

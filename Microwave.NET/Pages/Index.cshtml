@@ -14,6 +14,20 @@
     <div class="d-flex justify-content-around">
         <div class="d-flex flex-column">
             <div class="mb-3">
+                <label for="presetSelect" class="form-label">Programas</label>
+                <div class="input-group">
+                    <select class="form-control" id="presetSelect">
+                        <option value="">Deixe vazio para não utilizar nenhum preset</option>
+                    </select>
+                    <button type="button" id="btnDeletePreset" class="btn btn-danger" disabled>Remover</button>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <button type="button" id="btnNewPreset" class="btn btn-success mb-3">Novo Programa</button>
+            </div>
+
+            <div class="mb-3">
                 <label for="timerInput" class="form-label">Temporizador</label>
                 <input type="text" class="form-control" id="timerInput" placeholder="">
             </div>
@@ -32,8 +46,10 @@
         </div>
         <div>
             <div class="mb-3">
-                <span>Tempo restante</span>
+                <span>Tempo: </span>
                 <span id="timeRemaining"></span>
+                <span> / </span>
+                <span id="time"></span>
             </div>
             <div class="mb-3">
                 <span>Potência</span>
@@ -50,3 +66,5 @@
         <span id="isRunning"></span>
     </div>
 </div>
+
+<partial name="PartialViews/_NewPresetModal.cshtml" />

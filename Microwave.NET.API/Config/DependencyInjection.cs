@@ -1,4 +1,5 @@
-﻿using Microwave.NET.Services.Implementations.Microwave;
+﻿using Microwave.NET.API.Services;
+using Microwave.NET.Services.Implementations.Microwave;
 using Microwave.NET.Services.Implementations.PresetsPrograms.Presets;
 using Microwave.NET.Services.Interfaces;
 
@@ -31,11 +32,11 @@ public static class DependencyInjection
 
     private static void InjectPresetPrograms(WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IPresetProgram, PresetCarneBovina>();
-        builder.Services.AddScoped<IPresetProgram, PresetFeijao>();
-        builder.Services.AddScoped<IPresetProgram, PresetFrango>();
-        builder.Services.AddScoped<IPresetProgram, PresetLeite>();
-        builder.Services.AddScoped<IPresetProgram, PresetPipoca>();
+        builder.Services.AddTransient<IPresetProgram, PresetCarneBovina>();
+        builder.Services.AddTransient<IPresetProgram, PresetFeijao>();
+        builder.Services.AddTransient<IPresetProgram, PresetFrango>();
+        builder.Services.AddTransient<IPresetProgram, PresetLeite>();
+        builder.Services.AddTransient<IPresetProgram, PresetPipoca>();
     }
 
     /// <summary>
@@ -46,5 +47,6 @@ public static class DependencyInjection
     {
         builder.Services.AddSingleton<IMicrowaveManager, MicrowaveManager>();
         builder.Services.AddScoped<IMicrowaveService, MicrowaveService>();
+        builder.Services.AddTransient<ICustomPresetService, CustomPresetService>();
     }
 }

@@ -10,4 +10,5 @@ public class PresetFeijao: BasePresetedProgram, IPresetProgram
     public override int Tempo { get => 480; }
     public override int Potencia { get => 9; }
     public override EnumAlimentos Alimento { get => EnumAlimentos.FEIJAO; }
+    public override char Caractere { get => '='; }
 }

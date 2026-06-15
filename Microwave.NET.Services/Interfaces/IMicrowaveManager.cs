@@ -26,5 +26,5 @@ public interface IMicrowaveManager
     Task<bool> StartAsync();
     Task StopAsync();
     Task PauseAsync();
-    void SetPreset(EnumAlimentos opcao);
+    Task SetPresetAsync(string nomePrograma);
 }

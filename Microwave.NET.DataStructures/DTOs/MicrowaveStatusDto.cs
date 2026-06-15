@@ -7,4 +7,5 @@ public class MicrowaveStatusDto
     public string Progress { get; set; }
     public bool IsRunning { get; set; }
     public bool IsPaused { get; set; }
+    public int? TotalTime { get; set; }
 }

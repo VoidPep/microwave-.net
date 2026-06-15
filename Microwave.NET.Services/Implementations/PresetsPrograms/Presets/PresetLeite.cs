@@ -10,4 +10,5 @@ public class PresetLeite : BasePresetedProgram, IPresetProgram
     public override int Tempo { get => 300; }
     public override int Potencia { get => 5; }
     public override EnumAlimentos Alimento { get => EnumAlimentos.LEITE; }
+    public override char Caractere { get => '+'; }
 }

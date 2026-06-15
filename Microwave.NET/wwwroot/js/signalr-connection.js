@@ -1,4 +1,3 @@
-﻿const API_URL = "http://localhost:5050";
 const HUB_URL = `${API_URL}/microwaveHub`;
 
 const connection = new signalR.HubConnectionBuilder()
@@ -11,6 +10,8 @@ const connection = new signalR.HubConnectionBuilder()
     .build();
 
 connection.on("PropertyChanged", (state) => {
+    console.log(state.totalTime)
+    $("#time").text(state.totalTime != null ? `${state.totalTime}s` : "--");
     $("#timeRemaining").text(state.remainingTime != null ? `${state.remainingTime}s` : "--");
     $("#power").text(state.powerLevel ?? "--");
     $("#progress").text(state.progress ?? "");
@@ -22,33 +23,8 @@ connection.on("PropertyChanged", (state) => {
 async function startConnection() {
     try {
         await connection.start();
-        console.log("SignalR conectado.");
+        await loadPresets();
     } catch (err) {
         setTimeout(startConnection, 3000);
     }
 }
-
-function post(endpoint) {
-    return $.post(`${API_URL}/api/microwave/${endpoint}`);
-}
-
-async function iniciar() {
-    const timer = $("#timerInput").val();
-    const power = $("#powerInput").val();
-
-    if (timer) await $.post(`${API_URL}/api/microwave/set-timer?timeInSeconds=${timer}`);
-    if (power) await $.post(`${API_URL}/api/microwave/set-power?powerLevel=${power}`);
-
-    await post("start");
-}
-
-async function pausarParar() {
-    await post("cancel");
-}
-
-$(document).ready(() => {
-    startConnection();
-
-    $("#btnIniciar").on("click", iniciar);
-    $("#btnPausar").on("click", pausarParar);
-});

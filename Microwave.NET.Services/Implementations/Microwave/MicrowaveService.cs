@@ -13,6 +13,9 @@ public class MicrowaveService(IMicrowaveManager manager, IHubContext<MicrowaveHu
         manager.Progress = "";
         bool flowControl = true;
 
+        manager.TimerInSeconds = manager.TimerInSeconds == 0 || manager.TimerInSeconds == null ? GlobalConstants.QuickStartTimerDefault : manager.TimerInSeconds;
+        manager.PowerLevel = manager.PowerLevel == 0 || manager.PowerLevel == null ? GlobalConstants.QuickStartPowerDefault : manager.PowerLevel;
+
         while (manager.RemainingTime < manager.TimerInSeconds)
         {
             try
@@ -73,6 +76,7 @@ public class MicrowaveService(IMicrowaveManager manager, IHubContext<MicrowaveHu
                 "PropertyChanged",
                 new MicrowaveStatusDto
                 {
+                    TotalTime = manager.TimerInSeconds,
                     RemainingTime = manager.RemainingTime,
                     PowerLevel = manager.PowerLevel ?? GlobalConstants.QuickStartPowerDefault,
                     Progress = manager.Progress,

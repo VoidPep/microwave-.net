@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 using Microwave.NET.DataStructures.Constants;
 using Microwave.NET.DataStructures.DTOs;
 using Microwave.NET.DataStructures.SignalR;
 using Microwave.NET.Services.Implementations.PresetsPrograms;
 using Microwave.NET.Services.Interfaces;
-using System.Reflection;
 
 namespace Microwave.NET.Services.Implementations.Microwave;
 
-public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext, IEnumerable<IPresetProgram> presetPrograms) : IMicrowaveManager
+public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext, IServiceScopeFactory scopeFactory, ICustomPresetService customPresetService) : IMicrowaveManager
 {
     public CancellationTokenSource Cts { get; set; } = new();
 
@@ -49,7 +49,7 @@ public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext, IEnumerable<
             return false;
         }
 
-        if (TimerInSeconds == null || PowerLevel == null)
+        if (TimerInSeconds == null || TimerInSeconds == 0 || PowerLevel == null || PowerLevel == 0)
             QuickStart();
 
         IsRunning = true;
@@ -90,6 +90,7 @@ public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext, IEnumerable<
 
         RemainingTime = 0;
         TimerInSeconds = 0;
+        Character = '.';
     }
 
     public async Task PauseAsync()
@@ -99,11 +100,41 @@ public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext, IEnumerable<
         await UpdateHubAsync();
     }
 
-    public void SetPreset(EnumAlimentos opcao)
+    public async Task SetPresetAsync(string nomePrograma)
     {
-        var preset = presetPrograms.FirstOrDefault(q => q.Alimento == opcao);
+        if (IsRunning) return;
 
-        
+        using var scope = scopeFactory.CreateScope();
+        var presets = scope.ServiceProvider.GetServices<IPresetProgram>();
+
+        var preset = presets.FirstOrDefault(p =>
+            p is BasePresetedProgram bp && bp.Nome.Equals(nomePrograma, StringComparison.OrdinalIgnoreCase));
+
+        if (preset is BasePresetedProgram basePreset)
+        {
+            ApplyPreset(basePreset);
+            await UpdateHubAsync();
+            return;
+        }
+
+        var customPresets = await customPresetService.GetAllCustomPresetsAsync();
+        var customPreset = customPresets.FirstOrDefault(p => p.Nome.Equals(nomePrograma, StringComparison.OrdinalIgnoreCase));
+
+        if (customPreset != null)
+        {
+            TimerInSeconds = customPreset.Tempo;
+            PowerLevel = customPreset.Potencia;
+            Character = customPreset.Caractere;
+
+            await UpdateHubAsync();
+        }
+    }
+
+    private void ApplyPreset(BasePresetedProgram preset)
+    {
+        TimerInSeconds = preset.Tempo;
+        PowerLevel = preset.Potencia;
+        Character = preset.Caractere;
     }
 
     private async Task UpdateHubAsync()
@@ -112,6 +143,7 @@ public class MicrowaveManager(IHubContext<MicrowaveHub> hubContext, IEnumerable<
             "PropertyChanged",
             new MicrowaveStatusDto
             {
+                TotalTime = TimerInSeconds,
                 RemainingTime = RemainingTime,
                 PowerLevel = PowerLevel ?? GlobalConstants.QuickStartPowerDefault,
                 Progress = Progress,

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microwave.NET.DataStructures.Constants;
+using Microwave.NET.DataStructures.DTOs;
 using Microwave.NET.Services.Interfaces;
 
 
@@ -7,7 +8,7 @@ namespace Microwave.NET.API.Controllers;
 
 [ApiController]
 [Route("api/microwave")]
-public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveManager manager) : ControllerBase
+public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveManager manager, ICustomPresetService customPresetService) : ControllerBase
 {
 
     [HttpPost, Route("set-timer")]
@@ -44,7 +45,21 @@ public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveM
             throw;
         }
         return new JsonResult(new { Message = "Potência alterada." });
-    } 
+    }
+
+    [HttpPost, Route("set-preset")]
+    public async Task<IActionResult> SetPresetAsync(string nomePrograma)
+    {
+        try
+        {
+            await manager.SetPresetAsync(nomePrograma);
+            return new JsonResult(new { Message = "Preset aplicado com sucesso." });
+        }
+        catch (Exception)
+        {
+            return new JsonResult(new { Message = "Erro ao aplicar o preset." });
+        }
+    }
 
     [HttpPost, Route("start")]
     public async Task<IActionResult> StartAsync()
@@ -86,5 +101,49 @@ public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveM
         }
 
         return new JsonResult(new { Message = "" });
+    }
+
+    [HttpGet, Route("presets")]
+    public async Task<IActionResult> GetAllPresetsAsync()
+    {
+        try
+        {
+            var presets = await customPresetService.GetAllPresetsAsync();
+            return new JsonResult(presets);
+        }
+        catch (Exception)
+        {
+            return new JsonResult(new { Message = "Erro ao carregar presets." });
+        }
+    }
+
+    [HttpPost, Route("preset/create")]
+    public async Task<IActionResult> CreatePresetAsync([FromBody] CustomPresetDto preset)
+    {
+        if (preset == null || string.IsNullOrWhiteSpace(preset.Nome) || 
+            preset.Potencia <= 0 || preset.Tempo <= 0 || preset.Caractere == default)
+            return new JsonResult(new { Message = "Por favor, preencha todos os campos obrigatórios." });
+
+        if (!customPresetService.ValidateCharacter(preset.Caractere))
+            return new JsonResult(new { Message = "O caractere de aquecimento já está em uso." });
+
+        var success = await customPresetService.CreatePresetAsync(preset);
+
+        if (success)
+            return new JsonResult(new { Message = "Preset criado com sucesso." });
+
+        return new JsonResult(new { Message = "Erro ao criar o preset." });
+    }
+
+
+    [HttpDelete, Route("preset/delete-by-id")]
+    public async Task<IActionResult> DeletePresetByIdAsync(int id)
+    {
+        var success = await customPresetService.DeletePresetByIdAsync(id);
+
+        if (success)
+            return new JsonResult(new { Message = "Preset deletado com sucesso." });
+
+        return new JsonResult(new { Message = "Erro ao deletar o preset." });
     }
 }
