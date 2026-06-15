@@ -9,10 +9,23 @@ const connection = new signalR.HubConnectionBuilder()
     .withAutomaticReconnect()
     .build();
 
+function formatTimeDisplay(seconds) {
+    if (seconds == null) return "--";
+    if (seconds < 60) {
+        return `${seconds}s`;
+    } else {
+        const minutes = Math.floor(seconds / 60);
+
+        // a linha abaixo foi feita com ajuda de IA
+        const secs = seconds % 60;
+        return `${minutes}:${String(secs).padStart(2, '0')}m`;
+    }
+}
+
 connection.on("PropertyChanged", (state) => {
     console.log(state.totalTime)
-    $("#time").text(state.totalTime != null ? `${state.totalTime}s` : "--");
-    $("#timeRemaining").text(state.remainingTime != null ? `${state.remainingTime}s` : "--");
+    $("#time").text(formatTimeDisplay(state.totalTime));
+    $("#timeRemaining").text(formatTimeDisplay(state.remainingTime));
     $("#power").text(state.powerLevel ?? "--");
     $("#progress").text(state.progress ?? "");
     $("#isRunning").text(state.isRunning
