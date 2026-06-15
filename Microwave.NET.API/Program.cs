@@ -1,4 +1,5 @@
 using Microwave.NET.API.Config;
+using Microwave.NET.API.Middleware;
 using Microwave.NET.DataStructures.SignalR;
 using Scalar.AspNetCore;
 
@@ -21,9 +22,13 @@ else
     app.UseHttpsRedirection();
 }
 
+app.UseMiddleware<LoggingMiddleware>();
+
 app.UseCors();
 
 app.MapScalarApiReference();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

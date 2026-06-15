@@ -1,7 +1,11 @@
 ﻿using Microwave.NET.API.Services;
+using Microwave.NET.DataStructures.Constants;
 using Microwave.NET.Services.Implementations.Microwave;
 using Microwave.NET.Services.Implementations.PresetsPrograms.Presets;
 using Microwave.NET.Services.Interfaces;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
 
 namespace Microwave.NET.API.Config;
 
@@ -16,6 +20,8 @@ public static class DependencyInjection
         // Porém eu não quis fazer um serviço de log sequer um arquivo de log para não encher mais o projeto e desacoplar ao máximo
         builder.Services.AddSignalR();
 
+        AddAuth(builder);
+
         InjectServices(builder);
         InjectPresetPrograms(builder);
 
@@ -28,6 +34,26 @@ public static class DependencyInjection
                       .AllowAnyMethod()
                       .AllowCredentials());
         });
+    }
+
+    private static void AddAuth(WebApplicationBuilder builder)
+    {
+        var jwtKey = GlobalConstants.JwtSecret;
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "api",
+                    ValidAudience = "client",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+                };
+            });
     }
 
     private static void InjectPresetPrograms(WebApplicationBuilder builder)

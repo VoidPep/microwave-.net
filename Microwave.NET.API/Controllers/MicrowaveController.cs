@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microwave.NET.DataStructures.Constants;
 using Microwave.NET.DataStructures.DTOs;
 using Microwave.NET.Services.Interfaces;
@@ -8,6 +9,7 @@ namespace Microwave.NET.API.Controllers;
 
 [ApiController]
 [Route("api/microwave")]
+[Authorize]
 public class MicrowaveController(IMicrowaveService microwaveService, IMicrowaveManager manager, ICustomPresetService customPresetService) : ControllerBase
 {
 
