@@ -12,7 +12,7 @@ Simulação de um microondas via web, construída em .NET 10 com arquitetura sep
 - `Microwave.NET.DataStructures` -> DTOs, constantes, enums e definição do Hub SignalR |
 - `Microwave.NET.Test` -> Testes unitários com xUnit e Moq |
 
-Separei tudo com um formato de Layered Architecture (Arquitetura em camadas).
+Separei tudo com um formato de Layered Architecture (Arquitetura em camadas). Na verdade eu estava mirando mesmo em um Clean Architecture mas enxergo que essa separação de solution é possívelmente a mais adequada
 
 ## Design Patterns
 
